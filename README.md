@@ -34,8 +34,13 @@ $$G(\mathbf{x}) = \text{Softmax}(\text{KeepTopK}(H(\mathbf{x}), k))$$
 
 where:
 
-$$H(\mathbf{x})_i = (\mathbf{W}_g \cdot \mathbf{x})_i$$ 
-+ \text{StandardNormal}() \cdot \text{Softplus}((\mathbf{W}_{\text{noise}} \cdot \mathbf{x})_i)$$
+$$
+H(\mathbf{x})_i = (\mathbf{W}_g \cdot \mathbf{x})_i + \epsilon_i
+$$
+
+$$
+\epsilon_i = \text{StandardNormal}() \cdot \text{Softplus}\left((\mathbf{W}_{\text{noise}} \cdot \mathbf{x})_i\right)
+$$
 
 ### Auxiliary Loss
 
