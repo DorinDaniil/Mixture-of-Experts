@@ -54,9 +54,7 @@ $$\text{Coefficient Variation (CV)} = \frac{\text{standard deviation } (\sigma)}
 
 ### Load-Balancing Loss (LBL)
 
-For global load balancing, we use:
-
-$$\text{LBL}_{\text{global}} = K_E \sum_{i=1}^{K_E} \bar{f}_i \cdot \bar{P}_i$$
+$$\text{LBL} = K \sum_{i=1}^{K} f_i \cdot P_i$$
 
 ## References
 
