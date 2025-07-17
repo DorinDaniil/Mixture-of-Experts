@@ -1,6 +1,6 @@
 # Mixture of Experts Implementation
 
-This repository contains implementations of various approaches to building Mixture of Experts (MoE) models. The implementations are based on PyTorch and include algorithms from the 2017 paper on sparse MoE with auxiliary loss, as well as the Load-Balancing Loss (LBL) and a notebook for testing.
+This repository contains implementations of various approaches to building Mixture of Experts (MoE) models. The implementations are based on PyTorch and include algorithms from the Shazeer et al. 2017 on sparse MoE with auxiliary loss, as well as the Load-Balancing Loss (LBL) (Fedus et al. 2022) and a notebook for testing.
 
 ## About
 
