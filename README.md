@@ -1,16 +1,6 @@
 # Mixture of Experts Implementation
 
-This repository contains implementations of various approaches to building Mixture of Experts (MoE) models. The implementations are based on PyTorch and include algorithms from the Shazeer et al. 2017 on sparse MoE with auxiliary loss, as well as the Load-Balancing Loss (LBL) (Fedus et al. 2022) and a notebook for testing.
-
-## About
-
-In this repository, we have implemented the following:
-
-- Sparse MoE algorithms from the Shazeer et al. 2017 with auxiliary loss.
-- Load-Balancing Loss (LBL) for better token distribution among experts.
-- A Jupyter notebook for testing the implementations.
-
-The implementations are done using PyTorch.
+This repository contains implementations of various approaches to building Mixture of Experts (MoE) models. The implementations are based on PyTorch and include algorithms from the [Shazeer et al. 2017]((https://openreview.net/forum?id=B1ckMDqlg)) on sparse MoE with auxiliary loss, as well as the Load-Balancing Loss (LBL) [(Fedus et al. 2022)]((https://www.jmlr.org/papers/volume23/21-0998/21-0998.pdf)) and a notebook for testing.
 
 ## Formulas and Explanations
 
@@ -18,21 +8,21 @@ The implementations are done using PyTorch.
 
 The objective is to construct a mapping:
 
-$$f: \mathcal{X} \rightarrow \mathcal{Y}.$$
+$$F: \mathcal{X} \rightarrow \mathcal{Y}.$$
 
 The MoE mapping is defined as:
 
-$$f(\mathbf{x}) = \sum_{i=k}^{K} \mathbf{G}(\mathbf{x})_k \cdot f_k(\mathbf{x}), \quad f_k: \mathcal{X} \rightarrow \mathcal{Y}, \quad k=1,\ldots,K$$
+$$F(\mathbf{x}) = \sum_{k=1}^{K} \mathbf{G}(\mathbf{x})_k \cdot F_k(\mathbf{x}), \quad F_k: \mathcal{X} \rightarrow \mathcal{Y}, \quad k=1,\ldots,K$$
 
-where $f_k$ are experts, and $\mathbf{G}(\mathbf{x})$ is the gating function.
+where $F_k$ are experts, and $\mathbf{G}(\mathbf{x})$ is the gating function.
 
-### Noisy Top-K Gating
+### [Noisy Top-K Gating](https://openreview.net/forum?id=B1ckMDqlg)
 
 For balancing experts tokens in training, we use Noisy Top-K Gating:
 
 $$G(\mathbf{x}) = \text{Softmax}(\text{KeepTopK}(H(\mathbf{x}), k))$$
 
-where:
+Function $H(\mathbf{x})$ and KeepTopK:
 
 $$
 H(\mathbf{x})_i = (\mathbf{W}_g \cdot \mathbf{x})_i + \epsilon_i
@@ -42,19 +32,38 @@ $$
 \epsilon_i = \text{StandardNormal}() \cdot \text{Softplus}\left((\mathbf{W}_{\text{noise}} \cdot \mathbf{x})_i\right)
 $$
 
-### Auxiliary Loss
+$$
+\text{KeepTopK}(\mathbf{v}, k)_i =
+\begin{cases}
+v_i & \text{if } v_i \text{ is in the top } k \text{ elements of } \mathbf{v}. \\
+-\infty & \text{otherwise.}
+\end{cases}
+$$
+
+### [Auxiliary Loss](https://openreview.net/forum?id=B1ckMDqlg)
 
 The main challenge is achieving a uniform token distribution among experts. The Auxiliary Loss is defined as:
 
 $$\text{Auxiliary Loss} = w_{\text{importance}} \cdot \text{CV}(\text{Importance})^2$$
 
+$$
+\text{Importance} = \sum_{i} \text{softmax}(\text{token}_i)
+$$
+
 where CV is the Coefficient of Variation:
 
 $$\text{Coefficient Variation (CV)} = \frac{\text{standard deviation } (\sigma)}{\text{mean } (\mu)}$$
 
-### Load-Balancing Loss (LBL)
+### [Load-Balancing Loss (LBL)](https://www.jmlr.org/papers/volume23/21-0998/21-0998.pdf)
+Given $K$ experts indexed by $i$ and a batch $\mathcal{B}$ with $T$ tokens, loss is scaled dot-product $\mathbf{f}$ and $\mathbf{P}$:
 
 $$\text{LBL} = K \sum_{i=1}^{K} f_i \cdot P_i$$
+
+$$
+f_i = \dfrac{1}{T} \sum_{\mathbf{x} \in \mathcal{B}} \mathbb{1}\{\arg\max p(\mathbf{x}) = i\}, \quad P_i = \frac{1}{T} \sum_{\mathbf{x} \in \mathcal{B}} p_i(\mathbf{x}),
+$$
+
+where $f_i$ is fraction of tokens dispatched to expert $i$, $P_i$ is fraction of probability for expert $i$.
 
 ## References
 
