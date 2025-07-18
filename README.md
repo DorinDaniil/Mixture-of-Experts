@@ -6,7 +6,7 @@ This repository contains implementations of various approaches to building Mixtu
 
 In this repository, we have implemented the following:
 
-- Sparse MoE algorithms from the 2017 paper with auxiliary loss.
+- Sparse MoE algorithms from the Shazeer et al. 2017 with auxiliary loss.
 - Load-Balancing Loss (LBL) for better token distribution among experts.
 - A Jupyter notebook for testing the implementations.
 
