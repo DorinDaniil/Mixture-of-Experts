@@ -44,7 +44,9 @@ class MoELayer(nn.Module):
 
         # Combine expert outputs
         combined_output = sum(expert_outputs)
-        return combined_output, gate_probs
+        expert_indices = torch.argmax(gate_probs, dim=-1)
+
+        return combined_output, gate_probs, expert_indices
 
 def load_balancing_loss(gate_probs, expert_indices, num_experts, alpha=0.01):
     batch_size, sequence_length, _ = gate_probs.size()
